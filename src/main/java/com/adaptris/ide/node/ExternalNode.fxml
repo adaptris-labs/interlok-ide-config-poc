@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane fx:id="externalNodePane" minHeight="50.0" prefHeight="50.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <ImageView fx:id="externalNodeImage" fitHeight="50.0" fitWidth="50.0" layoutX="1.0" layoutY="1.0" pickOnBounds="true" preserveRatio="true" />
+      <Label fx:id="connectionUrl" layoutX="61.0" layoutY="1.0" prefHeight="17.0" prefWidth="124.0" text="Label" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="5.0" />
+   </children>
+</AnchorPane>
