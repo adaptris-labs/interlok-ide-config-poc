@@ -121,6 +121,12 @@ public class ExternalConnection {
   public enum ConnectionDirection {
     CONSUME,
     PRODUCE;
+
+    @Override
+    public  String toString()
+    {
+      return StringUtils.capitalize(name().toLowerCase());
+    }
   }
   
   private String connectionUrl;

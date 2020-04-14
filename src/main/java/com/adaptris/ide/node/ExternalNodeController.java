@@ -14,12 +14,15 @@ public class ExternalNodeController {
   @FXML
   private Label connectionUrl;
   @FXML
+  private Label direction;
+  @FXML
   private ImageView externalNodeImage;
   
   @FXML
   public void initialize() {
     externalNodeImage.setImage(externalConnection.getTechnology().getImage());
     connectionUrl.setText(externalConnection.getConnectionUrl());
+    direction.setText(externalConnection.getDirection().toString());
     
     externalNodePane.setOnMouseDragged(event -> {
       externalNodePane.setManaged(false);
