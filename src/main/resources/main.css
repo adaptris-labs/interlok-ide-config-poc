@@ -14,6 +14,7 @@
 
 .playPad {
     -fx-background-image: url("/image/alloy2.png");
+    /*-fx-background-color: white;*/
 }
 
 .label{

@@ -1,11 +1,5 @@
 package com.adaptris.ide;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-
 import com.adaptris.ide.jmx.InterlokJmxHelper;
 import com.adaptris.ide.node.ExternalConnection;
 import com.adaptris.ide.node.ExternalNodeController;
@@ -13,7 +7,6 @@ import com.adaptris.ide.node.InterlokNodeController;
 import com.adaptris.mgmt.cluster.ClusterInstance;
 import com.adaptris.mgmt.cluster.jgroups.ClusterInstanceEventListener;
 import com.adaptris.mgmt.cluster.jgroups.JGroupsListener;
-
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -21,12 +14,19 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+
 public class MainStageController implements ClusterInstanceEventListener {
     
   private Map<String, ClusterInstance> clusterInstances;
   
   // Key is combination of host and endpoint.
-  private Map<String, ExternalConnection> externalConnections;
+  private Set<ExternalConnection> externalConnections;
   
   private JGroupsListener clusterManager = new JGroupsListener();
   
@@ -42,7 +42,7 @@ public class MainStageController implements ClusterInstanceEventListener {
   @FXML
   public void initialize() {
     clusterInstances = new HashMap<>();
-    externalConnections = new HashMap<>();
+    externalConnections = new HashSet<>();
     
     clusterSearchButton.setOnMouseClicked((event) -> {
       handleSearchCluster();
@@ -62,19 +62,19 @@ public class MainStageController implements ClusterInstanceEventListener {
       interlokInstancePane.getStylesheets().add("/main.css");
       
       networkPane.getChildren().add(interlokInstancePane);
-      interlokInstancePane.setLayoutX(300);
-      interlokInstancePane.setLayoutY(300);
+      interlokInstancePane.setLayoutX(networkPane.getWidth() / 2);
+      interlokInstancePane.setLayoutY(networkPane.getHeight() / 2);
       
       try {
-        List<ExternalConnection> instanceExternalConnections = new InterlokJmxHelper().withMBeanServer(instance.getJmxAddress()).getInterlokConfig().getExternalConnections();
+        Set<ExternalConnection> instanceExternalConnections = new InterlokJmxHelper().withMBeanServer(instance.getJmxAddress()).getInterlokConfig().getExternalConnections();
         instanceExternalConnections.forEach(externalConnection -> {
-          if(externalConnection.getTechnology().canBeShared()) {
-            if(!externalConnections.containsKey(externalConnection.getConnectionUrl())) {
-              externalConnections.put(externalConnection.getConnectionUrl(), externalConnection);
+          if (externalConnection.getTechnology().canBeShared()) {
+            if (!externalConnections.contains(externalConnection)) {
+              externalConnections.add(externalConnection);
               drawNewExternalConnection(externalConnection);
             }
           } else {
-            externalConnections.put(externalConnection.getConnectionUrl(), externalConnection);
+            externalConnections.add(externalConnection);
             drawNewExternalConnection(externalConnection);
           }
         });
@@ -101,8 +101,8 @@ public class MainStageController implements ClusterInstanceEventListener {
       externalInstancePane.getStylesheets().add("/main.css");
       
       networkPane.getChildren().add(externalInstancePane);
-      externalInstancePane.setLayoutX(new Random().nextInt((500 - 50) + 1) + 50);
-      externalInstancePane.setLayoutY(new Random().nextInt((500 - 50) + 1) + 50);
+      externalInstancePane.setLayoutX(new Random().nextInt(((int)networkPane.getWidth() - 50) + 1) + 50);
+      externalInstancePane.setLayoutY(new Random().nextInt(((int)networkPane.getHeight() - 50) + 1) + 50);
     } catch (Exception ex) {
       ex.printStackTrace();
     }

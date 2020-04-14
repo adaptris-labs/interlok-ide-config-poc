@@ -1,10 +1,45 @@
 package com.adaptris.ide.node;
 
 import javafx.scene.image.Image;
+import org.apache.commons.lang3.StringUtils;
 
 public class ExternalConnection {
   
-  public static enum ConnectionTechnology {
+  public enum ConnectionTechnology {
+    NULL {
+      @Override
+      public Image getImage() {
+        return new Image(getClass().getResourceAsStream("/image/interlok-null.png"));
+      }
+
+      @Override
+      public boolean canBeShared() {
+        return true;
+      }
+
+      @Override
+      public boolean isConnectionTechnology(String className) {
+        return StringUtils.containsIgnoreCase(className, "null");
+      }
+    },
+
+    JDBC {
+      @Override
+      public Image getImage() {
+        return new Image(getClass().getResourceAsStream("/image/interlok-db.png"));
+      }
+
+      @Override
+      public boolean canBeShared() {
+        return true;
+      }
+
+      @Override
+      public boolean isConnectionTechnology(String className) {
+        return StringUtils.containsIgnoreCase(className, "jdbc");
+      }
+    },
+
     SOLACE {
       @Override
       public Image getImage() {
@@ -14,6 +49,11 @@ public class ExternalConnection {
       @Override
       public boolean canBeShared() {
         return true;
+      }
+
+      @Override
+      public boolean isConnectionTechnology(String className) {
+        return StringUtils.containsIgnoreCase(className, "jms");
       }
     },
     
@@ -27,6 +67,11 @@ public class ExternalConnection {
       public boolean canBeShared() {
         return true;
       }
+
+      @Override
+      public boolean isConnectionTechnology(String className) {
+        return false; // className.equals("");
+      }
     },
     
     FILESYSTEM {
@@ -38,6 +83,12 @@ public class ExternalConnection {
       @Override
       public boolean canBeShared() {
         return false;
+      }
+
+      @Override
+      public boolean isConnectionTechnology(String className) {
+        return StringUtils.containsIgnoreCase(className, "ftp") ||
+                StringUtils.containsIgnoreCase(className, "fs");
       }
     },
     
@@ -51,17 +102,24 @@ public class ExternalConnection {
       public boolean canBeShared() {
         return false;
       }
+
+      @Override
+      public boolean isConnectionTechnology(String className) {
+        return StringUtils.containsIgnoreCase(className, "jetty") ||
+                StringUtils.containsIgnoreCase(className, "http");
+      }
     };
     
     public abstract Image getImage();
     
     // Do we only want one node on the network map?
     public abstract boolean canBeShared();
+
+    public abstract boolean isConnectionTechnology(String className);
   }
 
-  private enum ConnectionDirection {
+  public enum ConnectionDirection {
     CONSUME,
-    
     PRODUCE;
   }
   
@@ -75,8 +133,9 @@ public class ExternalConnection {
   
   private ConnectionTechnology technology;
   
-  public ExternalConnection() {
-    
+  public ExternalConnection(ConnectionDirection direction)
+  {
+    this.direction = direction;
   }
 
   public String getConnectionUrl() {
@@ -118,5 +177,41 @@ public class ExternalConnection {
   public void setTechnology(ConnectionTechnology technology) {
     this.technology = technology;
   }
-  
+
+  @Override
+  public int hashCode()
+  {
+    int result = 0;
+    result = 31 * result + connectionUrl.hashCode();
+    result = 31 * result + endpoint.hashCode();
+    result = 31 * result + connectionClassName.hashCode();
+    result = 31 * result + direction.hashCode();
+    result = 31 * result + technology.hashCode();
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object other)
+  {
+    if (!(other instanceof ExternalConnection)) {
+      return false;
+    }
+    ExternalConnection x = (ExternalConnection)other;
+    if (!connectionUrl.equals(x.connectionUrl)) {
+      return false;
+    }
+    if (!endpoint.equals(x.endpoint)) {
+      return false;
+    }
+    if (!connectionClassName.equals(x.connectionClassName)) {
+      return false;
+    }
+    if (!direction.equals(x.direction)) {
+      return false;
+    }
+    if (!technology.equals(x.technology)) {
+      return false;
+    }
+    return true;
+  }
 }

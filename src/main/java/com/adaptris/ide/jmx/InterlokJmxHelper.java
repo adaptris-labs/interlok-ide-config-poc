@@ -1,8 +1,7 @@
 package com.adaptris.ide.jmx;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import com.adaptris.core.*;
+import com.adaptris.ide.node.ExternalConnection;
 
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectInstance;
@@ -10,10 +9,8 @@ import javax.management.ObjectName;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
-
-import com.adaptris.core.Adapter;
-import com.adaptris.core.XStreamMarshaller;
-import com.adaptris.ide.node.ExternalConnection;
+import java.util.HashSet;
+import java.util.Set;
 
 public class InterlokJmxHelper {
   
@@ -51,9 +48,48 @@ public class InterlokJmxHelper {
       return null;
   }
 
-  public List<ExternalConnection> getExternalConnections () {
-    List<ExternalConnection> connections = new ArrayList<ExternalConnection>();
-    
+  public Set<ExternalConnection> getExternalConnections () {
+    Set<ExternalConnection> connections = new HashSet<>();
+
+    for (Channel channel : adapter.getChannelList())
+    {
+      AdaptrisConnection consumeConnection = channel.getConsumeConnection();
+      AdaptrisConnection produceConnection = channel.getProduceConnection();
+
+      for (Workflow workflow : channel.getWorkflowList())
+      {
+        ExternalConnection connection = new ExternalConnection(ExternalConnection.ConnectionDirection.CONSUME);
+
+        AdaptrisMessageConsumer consumer = workflow.getConsumer();
+        ConsumeDestination consumeDestination = consumer.getDestination();
+        connection.setConnectionClassName(consumeConnection.getClass().getName());
+        connection.setTechnology(guessTechnology(consumeConnection));
+        connection.setConnectionUrl(consumeDestination != null ? consumeDestination.getDestination() : "NULL");
+        connection.setEndpoint("TODO");
+
+        connections.add(connection);
+
+        connection = new ExternalConnection(ExternalConnection.ConnectionDirection.PRODUCE);
+
+        AdaptrisMessageProducer producer = workflow.getProducer();
+        ProduceDestination produceDestination = producer.getDestination();
+        connection.setConnectionClassName(produceConnection.getClass().getName());
+        connection.setTechnology(guessTechnology(produceConnection));
+        try
+        {
+          connection.setConnectionUrl(produceDestination.getDestination(DefaultMessageFactory.getDefaultInstance().newMessage()));
+        }
+        catch (Exception e)
+        {
+          connection.setConnectionUrl("NULL");
+        }
+        connection.setEndpoint("TODO");
+
+        connections.add(connection);
+      }
+    }
+
+    /*
     ExternalConnection consumeConnection = new ExternalConnection();
     consumeConnection.setConnectionClassName("com.adaptris.core.http.jetty.EmbeddedConnection");
     consumeConnection.setConnectionUrl("http://192.168.0.1/");
@@ -65,10 +101,23 @@ public class InterlokJmxHelper {
     produceConnection.setConnectionUrl("tcp://localhost:55555");
     produceConnection.setEndpoint("jms:queue:Sample.Q1");
     produceConnection.setTechnology(ExternalConnection.ConnectionTechnology.SOLACE);
-    
+
     connections.add(consumeConnection);
     connections.add(produceConnection);
-    
+    */
+
     return connections;
+  }
+
+  private ExternalConnection.ConnectionTechnology guessTechnology(AdaptrisConnection connection)
+  {
+    for (ExternalConnection.ConnectionTechnology tech : ExternalConnection.ConnectionTechnology.values())
+    {
+      if (tech.isConnectionTechnology(connection.getClass().getName()))
+      {
+        return tech;
+      }
+    }
+    return ExternalConnection.ConnectionTechnology.NULL;
   }
 }
