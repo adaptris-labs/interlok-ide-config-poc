@@ -6,6 +6,7 @@ plugins {
   id  "jacoco"
   id 'com.github.spotbugs' version '3.0.0'
   id "io.freefair.lombok" version "4.1.6"
+  //id 'org.openjfx.javafxplugin' version '0.0.8'
 }
 
 ext {
@@ -47,8 +48,8 @@ ext.gitBranchNameOrTimestamp = { branchName ->
 ext.buildInfo = { ->
    new ByteArrayOutputStream().withStream { os ->
       exec {
-        executable = "cmd"
-        args = ["git", "rev-parse", "--abbrev-ref", "HEAD"]
+        executable = "git"
+        args = ["rev-parse", "--abbrev-ref", "HEAD"]
         standardOutput = os
       }
       def branchName = os.toString().replaceAll("\r", "").replaceAll("\n", "").trim();
