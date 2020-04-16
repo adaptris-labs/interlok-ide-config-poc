@@ -10,6 +10,7 @@ import com.adaptris.mgmt.cluster.jgroups.JGroupsListener;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
@@ -18,7 +19,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 
 public class MainStageController implements ClusterInstanceEventListener {
@@ -62,8 +62,8 @@ public class MainStageController implements ClusterInstanceEventListener {
       interlokInstancePane.getStylesheets().add("/main.css");
       
       networkPane.getChildren().add(interlokInstancePane);
-      interlokInstancePane.setLayoutX(networkPane.getWidth() / 2);
-      interlokInstancePane.setLayoutY(networkPane.getHeight() / 2);
+      interlokInstancePane.setLayoutX(networkPane.getWidth() / 2 - interlokInstancePane.getPrefHeight());
+      interlokInstancePane.setLayoutY(networkPane.getHeight() / 2 - interlokInstancePane.getPrefHeight());
       
       try {
         Set<ExternalConnection> instanceExternalConnections = new InterlokJmxHelper().withMBeanServer(instance.getJmxAddress()).getInterlokConfig().getExternalConnections();
@@ -99,10 +99,19 @@ public class MainStageController implements ClusterInstanceEventListener {
   
       AnchorPane externalInstancePane = loader.load();
       externalInstancePane.getStylesheets().add("/main.css");
-      
+      externalInstancePane.setUserData(controller);
+
+      int y = (int)(externalInstancePane.getPrefHeight() / 2);
+      for (Node child : networkPane.getChildren()) {
+        ExternalNodeController nodeController = (ExternalNodeController)child.getUserData();
+        if (nodeController != null && nodeController.getExternalConnection().getDirection() == externalConnection.getDirection()) {
+          y += externalInstancePane.getPrefHeight() * 3 / 2;
+        }
+      }
+
       networkPane.getChildren().add(externalInstancePane);
-      externalInstancePane.setLayoutX(new Random().nextInt(((int)networkPane.getWidth() - 50) + 1) + 50);
-      externalInstancePane.setLayoutY(new Random().nextInt(((int)networkPane.getHeight() - 50) + 1) + 50);
+      externalInstancePane.setLayoutX((externalConnection.getDirection() == ExternalConnection.ConnectionDirection.CONSUME ? 1 : 3) * (networkPane.getWidth() - externalInstancePane.getPrefWidth()) / 4);
+      externalInstancePane.setLayoutY(y);
     } catch (Exception ex) {
       ex.printStackTrace();
     }
