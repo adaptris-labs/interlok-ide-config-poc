@@ -62,11 +62,12 @@ public class MainStageController implements ClusterInstanceEventListener {
 
       AnchorPane interlokInstancePane = loader.load();
       interlokInstancePane.getStylesheets().add("/main.css");
-      
+      interlokInstancePane.setUserData(controller);
+
       networkPane.getChildren().add(interlokInstancePane);
       interlokInstancePane.setLayoutX(networkPane.getWidth() / 2 - interlokInstancePane.getPrefHeight());
       interlokInstancePane.setLayoutY(networkPane.getHeight() / 2 - interlokInstancePane.getPrefHeight());
-      
+
       try {
         Set<ExternalConnection> instanceExternalConnections = new InterlokJmxHelper().withMBeanServer(instance.getJmxAddress()).getInterlokConfig().getExternalConnections();
         instanceExternalConnections.forEach(externalConnection -> {
@@ -82,7 +83,7 @@ public class MainStageController implements ClusterInstanceEventListener {
       } catch (Exception e) {
         e.printStackTrace();
       }
-      
+
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -103,9 +104,14 @@ public class MainStageController implements ClusterInstanceEventListener {
 
       int y = (int)(externalInstancePane.getPrefHeight() / 2);
       for (Node child : networkPane.getChildren()) {
-        ExternalNodeController nodeController = (ExternalNodeController)child.getUserData();
-        if (nodeController != null && nodeController.getExternalConnection().getDirection() == externalConnection.getDirection()) {
-          y += externalInstancePane.getPrefHeight() * 3 / 2;
+        Object node = child.getUserData();
+        if (node instanceof ExternalNodeController)
+        {
+          ExternalNodeController nodeController = (ExternalNodeController)node;
+          if (nodeController != null && nodeController.getExternalConnection().getDirection() == externalConnection.getDirection())
+          {
+            y += externalInstancePane.getPrefHeight() * 3 / 2;
+          }
         }
       }
 
@@ -119,19 +125,24 @@ public class MainStageController implements ClusterInstanceEventListener {
     }
   }
 
-  private void connectClusterToExternal(AnchorPane cluster, AnchorPane external)
+  private void connectClusterToExternal(AnchorPane cluster, AnchorPane endpoint)
   {
-    if (cluster == null || external == null)
+    if (cluster == null || endpoint == null)
     {
       return;
     }
     double clusterX = cluster.getLayoutX() + cluster.getPrefWidth() / 8;
     double clusterY = cluster.getLayoutY() + cluster.getPrefHeight() / 2;
-    double externalX = external.getLayoutX() + external.getPrefWidth() / 8;
-    double externalY = external.getLayoutY() + external.getPrefHeight() / 2;
+    double externalX = endpoint.getLayoutX() + endpoint.getPrefWidth() / 8;
+    double externalY = endpoint.getLayoutY() + endpoint.getPrefHeight() / 2;
 
     Line line = new Line(clusterX, clusterY, externalX, externalY);
     line.setStroke(Color.rgb(255, 255, 255));
+
+    InterlokNodeController interlok = (InterlokNodeController)cluster.getUserData();
+    ExternalNodeController external = (ExternalNodeController)endpoint.getUserData();
+    interlok.addLineToExternalNode(line);
+    external.setLineToInterlokNode(line);
 
     networkPane.getChildren().add(line);
   }
