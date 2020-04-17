@@ -14,6 +14,8 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -68,17 +70,15 @@ public class MainStageController implements ClusterInstanceEventListener {
       try {
         Set<ExternalConnection> instanceExternalConnections = new InterlokJmxHelper().withMBeanServer(instance.getJmxAddress()).getInterlokConfig().getExternalConnections();
         instanceExternalConnections.forEach(externalConnection -> {
-          if (externalConnection.getTechnology().canBeShared()) {
-            if (!externalConnections.contains(externalConnection)) {
-              externalConnections.add(externalConnection);
-              drawNewExternalConnection(externalConnection);
-            }
-          } else {
+          AnchorPane external = null;
+          if (!externalConnection.getTechnology().canBeShared() || !externalConnections.contains(externalConnection))
+          {
             externalConnections.add(externalConnection);
-            drawNewExternalConnection(externalConnection);
+            external = drawNewExternalConnection(externalConnection);
+            connectClusterToExternal(interlokInstancePane, external);
           }
         });
-        
+
       } catch (Exception e) {
         e.printStackTrace();
       }
@@ -89,7 +89,7 @@ public class MainStageController implements ClusterInstanceEventListener {
     
   }
 
-  private void drawNewExternalConnection(ExternalConnection externalConnection) {
+  private AnchorPane drawNewExternalConnection(ExternalConnection externalConnection) {
     try {
       ExternalNodeController controller = new ExternalNodeController();
       controller.setExternalConnection(externalConnection);
@@ -110,11 +110,30 @@ public class MainStageController implements ClusterInstanceEventListener {
       }
 
       networkPane.getChildren().add(externalInstancePane);
-      externalInstancePane.setLayoutX((externalConnection.getDirection() == ExternalConnection.ConnectionDirection.CONSUME ? 1 : 3) * (networkPane.getWidth() - externalInstancePane.getPrefWidth()) / 4);
+      externalInstancePane.setLayoutX((externalConnection.getDirection() == ExternalConnection.ConnectionDirection.CONSUME ? 1 : 7) * (networkPane.getWidth() - externalInstancePane.getPrefWidth()) / 8);
       externalInstancePane.setLayoutY(y);
+      return externalInstancePane;
     } catch (Exception ex) {
       ex.printStackTrace();
+      return null;
     }
+  }
+
+  private void connectClusterToExternal(AnchorPane cluster, AnchorPane external)
+  {
+    if (cluster == null || external == null)
+    {
+      return;
+    }
+    double clusterX = cluster.getLayoutX() + cluster.getPrefWidth() / 8;
+    double clusterY = cluster.getLayoutY() + cluster.getPrefHeight() / 2;
+    double externalX = external.getLayoutX() + external.getPrefWidth() / 8;
+    double externalY = external.getLayoutY() + external.getPrefHeight() / 2;
+
+    Line line = new Line(clusterX, clusterY, externalX, externalY);
+    line.setStroke(Color.rgb(255, 255, 255));
+
+    networkPane.getChildren().add(line);
   }
 
   private void handleSearchCluster() {
