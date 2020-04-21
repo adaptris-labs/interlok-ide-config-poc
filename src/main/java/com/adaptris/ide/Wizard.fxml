@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<AnchorPane prefHeight="480.0" prefWidth="854.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <ChoiceBox fx:id="consumers" layoutX="127.0" layoutY="51.0" prefHeight="28.0" prefWidth="200.0" />
+      <ChoiceBox fx:id="producers" layoutX="527.0" layoutY="51.0" prefHeight="28.0" prefWidth="200.0" />
+      <TextField fx:id="consumerDestination" layoutX="127.0" layoutY="95.0" prefHeight="28.0" prefWidth="200.0" visible="false" />
+      <TextField fx:id="producerDestination" layoutX="517.0" layoutY="95.0" prefHeight="28.0" prefWidth="200.0" visible="false" />
+      <Button fx:id="okayButton" defaultButton="true" disable="true" layoutX="627.0" layoutY="438.0" mnemonicParsing="false" text="Okay" />
+      <Button fx:id="cancelButton" cancelButton="true" layoutX="697.0" layoutY="438.0" mnemonicParsing="false" text="Cancel" />
+   </children>
+</AnchorPane>
