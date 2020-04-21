@@ -119,8 +119,8 @@ public class ExternalConnection {
   }
 
   public enum ConnectionDirection {
-    CONSUME,
-    PRODUCE;
+    CONSUMER,
+    PRODUCER;
 
     @Override
     public  String toString()

@@ -48,7 +48,7 @@ public class InterlokJmxHelper {
       return null;
   }
 
-  public Set<ExternalConnection> getExternalConnections () {
+  public Set<ExternalConnection> getExternalConnections() {
     Set<ExternalConnection> connections = new HashSet<>();
 
     for (Channel channel : adapter.getChannelList())
@@ -58,7 +58,7 @@ public class InterlokJmxHelper {
 
       for (Workflow workflow : channel.getWorkflowList())
       {
-        ExternalConnection connection = new ExternalConnection(ExternalConnection.ConnectionDirection.CONSUME);
+        ExternalConnection connection = new ExternalConnection(ExternalConnection.ConnectionDirection.CONSUMER);
 
         AdaptrisMessageConsumer consumer = workflow.getConsumer();
         ConsumeDestination consumeDestination = consumer.getDestination();
@@ -69,7 +69,7 @@ public class InterlokJmxHelper {
 
         connections.add(connection);
 
-        connection = new ExternalConnection(ExternalConnection.ConnectionDirection.PRODUCE);
+        connection = new ExternalConnection(ExternalConnection.ConnectionDirection.PRODUCER);
 
         AdaptrisMessageProducer producer = workflow.getProducer();
         ProduceDestination produceDestination = producer.getDestination();

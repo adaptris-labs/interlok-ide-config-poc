@@ -11,11 +11,14 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -40,6 +43,9 @@ public class MainStageController implements ClusterInstanceEventListener {
   
   @FXML
   private Button clusterSearchButton;
+
+  @FXML
+  private Button newClusterButton;
   
   @FXML
   public void initialize() {
@@ -50,6 +56,10 @@ public class MainStageController implements ClusterInstanceEventListener {
       handleSearchCluster();
     });
 
+    newClusterButton.setOnMouseClicked((event) ->
+    {
+      newClusterWizard();
+    });
   }
 
   private void drawNewClusterInstance(ClusterInstance instance) {
@@ -116,7 +126,7 @@ public class MainStageController implements ClusterInstanceEventListener {
       }
 
       networkPane.getChildren().add(externalInstancePane);
-      externalInstancePane.setLayoutX((externalConnection.getDirection() == ExternalConnection.ConnectionDirection.CONSUME ? 1 : 7) * (networkPane.getWidth() - externalInstancePane.getPrefWidth()) / 8);
+      externalInstancePane.setLayoutX((externalConnection.getDirection() == ExternalConnection.ConnectionDirection.CONSUMER ? 1 : 7) * (networkPane.getWidth() - externalInstancePane.getPrefWidth()) / 8);
       externalInstancePane.setLayoutY(y);
       return externalInstancePane;
     } catch (Exception ex) {
@@ -172,4 +182,24 @@ public class MainStageController implements ClusterInstanceEventListener {
     });
   }
 
+
+  private void newClusterWizard()
+  {
+    try
+    {
+      FXMLLoader loader = new FXMLLoader(getClass().getResource("Wizard.fxml"));
+      loader.setController(new Wizard());
+      Parent root = loader.load();
+      Stage stage = new Stage();
+      stage.setTitle("Wizard");
+      Scene scene = new Scene(root);
+      scene.getStylesheets().add("/main.css");
+      stage.setScene(scene);
+      stage.show();
+    }
+    catch (IOException e)
+    {
+      e.printStackTrace();
+    }
+  }
 }
