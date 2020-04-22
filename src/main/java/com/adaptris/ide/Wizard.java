@@ -76,7 +76,7 @@ public class Wizard
   private void checkEnableOkay()
   {
     okayButton.setDisable(!(consumerDestination.isVisible() && !StringUtils.isEmpty(consumerDestination.getText()) &&
-                          producerDestination.isVisible() && !StringUtils.isEmpty(producerDestination.getText())));
+                            producerDestination.isVisible() && !StringUtils.isEmpty(producerDestination.getText())));
   }
 
   private ObservableList<ConnectionTechnology> getTechnologies()
