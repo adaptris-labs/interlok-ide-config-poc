@@ -52,4 +52,19 @@ public class ExternalNodeController {
     this.externalConnection = externalConnection;
   }
 
+  @Override
+  public int hashCode()
+  {
+    return externalConnection.hashCode();
+  }
+
+  @Override
+  public boolean equals(Object o)
+  {
+    if (o != null && o instanceof ExternalNodeController)
+    {
+      return externalConnection.equals(((ExternalNodeController)o).externalConnection);
+    }
+    return false;
+  }
 }

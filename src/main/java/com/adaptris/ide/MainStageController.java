@@ -37,7 +37,9 @@ public class MainStageController implements ClusterInstanceEventListener {
   
   @FXML
   private TextField clusterName;
-  
+
+  private AnchorPane interlokNode;
+
   @FXML
   private AnchorPane networkPane;
   
@@ -58,7 +60,7 @@ public class MainStageController implements ClusterInstanceEventListener {
 
     newClusterButton.setOnMouseClicked((event) ->
     {
-      newClusterWizard();
+      newWizard();
     });
   }
 
@@ -70,23 +72,22 @@ public class MainStageController implements ClusterInstanceEventListener {
       FXMLLoader loader = new FXMLLoader(getClass().getResource("node/InterlokNode.fxml"));
       loader.setController(controller);
 
-      AnchorPane interlokInstancePane = loader.load();
-      interlokInstancePane.getStylesheets().add("/main.css");
-      interlokInstancePane.setUserData(controller);
+      interlokNode = loader.load();
+      interlokNode.getStylesheets().add("/main.css");
+      interlokNode.setUserData(controller);
 
-      networkPane.getChildren().add(interlokInstancePane);
-      interlokInstancePane.setLayoutX(networkPane.getWidth() / 2 - interlokInstancePane.getPrefHeight());
-      interlokInstancePane.setLayoutY(networkPane.getHeight() / 2 - interlokInstancePane.getPrefHeight());
+      networkPane.getChildren().add(interlokNode);
+      interlokNode.setLayoutX(networkPane.getWidth() / 2 - interlokNode.getPrefHeight());
+      interlokNode.setLayoutY(networkPane.getHeight() / 2 - interlokNode.getPrefHeight());
 
       try {
         Set<ExternalConnection> instanceExternalConnections = new InterlokJmxHelper().withMBeanServer(instance.getJmxAddress()).getInterlokConfig().getExternalConnections();
         instanceExternalConnections.forEach(externalConnection -> {
-          AnchorPane external = null;
           if (!externalConnection.getTechnology().canBeShared() || !externalConnections.contains(externalConnection))
           {
             externalConnections.add(externalConnection);
-            external = drawNewExternalConnection(externalConnection);
-            connectClusterToExternal(interlokInstancePane, external);
+            AnchorPane external = drawNewExternalConnection(externalConnection);
+            connectInterlokToExternal(external);
           }
         });
 
@@ -135,21 +136,21 @@ public class MainStageController implements ClusterInstanceEventListener {
     }
   }
 
-  private void connectClusterToExternal(AnchorPane cluster, AnchorPane endpoint)
+  private void connectInterlokToExternal(AnchorPane endpoint)
   {
-    if (cluster == null || endpoint == null)
+    if (endpoint == null)
     {
       return;
     }
-    double clusterX = cluster.getLayoutX() + cluster.getPrefWidth() / 8;
-    double clusterY = cluster.getLayoutY() + cluster.getPrefHeight() / 2;
+    double clusterX = interlokNode.getLayoutX() + interlokNode.getPrefWidth() / 8;
+    double clusterY = interlokNode.getLayoutY() + interlokNode.getPrefHeight() / 2;
     double externalX = endpoint.getLayoutX() + endpoint.getPrefWidth() / 8;
     double externalY = endpoint.getLayoutY() + endpoint.getPrefHeight() / 2;
 
     Line line = new Line(clusterX, clusterY, externalX, externalY);
     line.setStroke(Color.rgb(255, 255, 255));
 
-    InterlokNodeController interlok = (InterlokNodeController)cluster.getUserData();
+    InterlokNodeController interlok = (InterlokNodeController)interlokNode.getUserData();
     ExternalNodeController external = (ExternalNodeController)endpoint.getUserData();
     interlok.addLineToExternalNode(line);
     external.setLineToInterlokNode(line);
@@ -183,12 +184,20 @@ public class MainStageController implements ClusterInstanceEventListener {
   }
 
 
-  private void newClusterWizard()
+  private void newWizard()
   {
     try
     {
       FXMLLoader loader = new FXMLLoader(getClass().getResource("Wizard.fxml"));
-      loader.setController(new Wizard());
+      Wizard wizard = new Wizard();
+      wizard.setOnOkay((consumer, producer) ->
+      {
+        externalConnections.add(consumer);
+        connectInterlokToExternal(drawNewExternalConnection(consumer));
+        externalConnections.add(producer);
+        connectInterlokToExternal(drawNewExternalConnection(producer));
+      });
+      loader.setController(wizard);
       Parent root = loader.load();
       Stage stage = new Stage();
       stage.setTitle("Wizard");

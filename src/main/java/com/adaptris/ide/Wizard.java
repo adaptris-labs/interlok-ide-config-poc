@@ -1,5 +1,6 @@
 package com.adaptris.ide;
 
+import com.adaptris.ide.node.ExternalConnection;
 import com.adaptris.ide.node.ExternalConnection.ConnectionTechnology;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -8,6 +9,8 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 
 public class Wizard
@@ -30,8 +33,15 @@ public class Wizard
   @FXML
   private Button cancelButton;
 
+  @Getter
+  @Setter
+  private OkayHandler onOkay;
+
   @FXML
-  public void initialize() {
+  public void initialize()
+  {
+    ExternalConnection consumer = new ExternalConnection(ExternalConnection.ConnectionDirection.CONSUMER);
+    ExternalConnection producer = new ExternalConnection(ExternalConnection.ConnectionDirection.PRODUCER);
 
     consumers.setItems(getTechnologies());
     consumers.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) ->
@@ -39,11 +49,16 @@ public class Wizard
       ConnectionTechnology tech = (ConnectionTechnology)newValue;
       //ObservableList<String> consumers = getConsumers(tech);
       consumerDestination.setVisible(tech != ConnectionTechnology.NULL);
+      consumer.setTechnology(tech);
       // TODO: provide more settings
+      consumer.setEndpoint("NULL");
+      consumer.setConnectionClassName("TODO");
+
       checkEnableOkay();
     });
     consumerDestination.setOnKeyTyped((event) ->
     {
+      consumer.setConnectionUrl(consumerDestination.getText());
       checkEnableOkay();
     });
 
@@ -53,18 +68,24 @@ public class Wizard
       ConnectionTechnology tech = (ConnectionTechnology)newValue;
       //ObservableList<String> producers = getProducers(tech);
       producerDestination.setVisible(tech != ConnectionTechnology.NULL);
+      producer.setTechnology(tech);
       // TODO: provide more settings
+      producer.setEndpoint("NULL");
+      producer.setConnectionClassName("TODO");
+
       checkEnableOkay();
     });
+
     producerDestination.setOnKeyTyped((event) ->
     {
+      producer.setConnectionUrl(producerDestination.getText());
       checkEnableOkay();
     });
 
     okayButton.setOnMouseClicked((event) ->
     {
-      // TODO: save the new workflow
       ((Node)(event.getSource())).getScene().getWindow().hide();
+      onOkay.onOkay(consumer, producer);
     });
 
     cancelButton.setOnMouseClicked((event) ->
@@ -116,4 +137,9 @@ public class Wizard
     return list;
   }*/
 
+  @FunctionalInterface
+  public interface OkayHandler
+  {
+    void onOkay(ExternalConnection consumer, ExternalConnection producer);
+  }
 }

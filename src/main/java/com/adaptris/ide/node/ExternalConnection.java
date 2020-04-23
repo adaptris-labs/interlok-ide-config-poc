@@ -1,6 +1,8 @@
 package com.adaptris.ide.node;
 
 import javafx.scene.image.Image;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 
 public class ExternalConnection {
@@ -128,60 +130,30 @@ public class ExternalConnection {
       return StringUtils.capitalize(name().toLowerCase());
     }
   }
-  
+
+  @Getter
+  @Setter
   private String connectionUrl;
-  
+
+  @Getter
+  @Setter
   private String endpoint;
-  
+
+  @Getter
+  @Setter
   private String connectionClassName;
-  
+
+  @Getter
+  @Setter
   private ConnectionDirection direction;
-  
+
+  @Getter
+  @Setter
   private ConnectionTechnology technology;
   
   public ExternalConnection(ConnectionDirection direction)
   {
     this.direction = direction;
-  }
-
-  public String getConnectionUrl() {
-    return connectionUrl;
-  }
-
-  public void setConnectionUrl(String connectionUrl) {
-    this.connectionUrl = connectionUrl;
-  }
-
-  public String getEndpoint() {
-    return endpoint;
-  }
-
-  public void setEndpoint(String endpoint) {
-    this.endpoint = endpoint;
-  }
-
-  public String getConnectionClassName() {
-    return connectionClassName;
-  }
-
-  public void setConnectionClassName(String connectionClassName) {
-    this.connectionClassName = connectionClassName;
-  }
-
-  public ConnectionDirection getDirection() {
-    return direction;
-  }
-
-  public void setDirection(ConnectionDirection direction) {
-    this.direction = direction;
-  }
-
-  public ConnectionTechnology getTechnology() {
-    return technology;
-  }
-
-  public void setTechnology(ConnectionTechnology technology) {
-    this.technology = technology;
   }
 
   @Override

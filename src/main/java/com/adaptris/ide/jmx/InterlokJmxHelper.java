@@ -35,14 +35,14 @@ public class InterlokJmxHelper {
   public InterlokJmxHelper getInterlokConfig() throws Exception {
     Set<ObjectInstance> queryMBeans = mBeanServerConnection.queryMBeans(new ObjectName(ADAPTER_OBJECT_NAME), null);
     
-    if(queryMBeans.size() == 1) {
+    if (queryMBeans.size() == 1) {
       ObjectInstance objectInstance = (ObjectInstance) queryMBeans.toArray()[0];
       
       String config = (String) mBeanServerConnection.getAttribute(objectInstance.getObjectName(), ADAPTER_CONFIG_ATTRIBUTE);
-      
+
       XStreamMarshaller marshaller = new XStreamMarshaller();
       adapter = (Adapter) marshaller.unmarshal(config);
-      
+
       return this;
     } else
       return null;
