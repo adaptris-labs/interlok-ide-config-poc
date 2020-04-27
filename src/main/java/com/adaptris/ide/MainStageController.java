@@ -186,21 +186,36 @@ public class MainStageController implements ClusterInstanceEventListener {
 
   private void newWizard()
   {
-    try
+    FXMLLoader l1 = new FXMLLoader(getClass().getResource("Wizard.fxml"));
+    Wizard w1 = new Wizard(ExternalConnection.ConnectionDirection.CONSUMER);
+    w1.setOnNext((consumer) ->
     {
-      FXMLLoader loader = new FXMLLoader(getClass().getResource("Wizard.fxml"));
-      Wizard wizard = new Wizard();
-      wizard.setOnOkay((consumer, producer) ->
+      externalConnections.add(consumer);
+      connectInterlokToExternal(drawNewExternalConnection(consumer));
+
+      FXMLLoader l2 = new FXMLLoader(getClass().getResource("Wizard.fxml"));
+      Wizard w2 = new Wizard(ExternalConnection.ConnectionDirection.PRODUCER);
+      w2.setOnNext((producer) ->
       {
-        externalConnections.add(consumer);
-        connectInterlokToExternal(drawNewExternalConnection(consumer));
         externalConnections.add(producer);
         connectInterlokToExternal(drawNewExternalConnection(producer));
+
+        // TODO more stuff
       });
-      loader.setController(wizard);
+      l2.setController(w2);
+      showWindow(l2, "Wizard : Producer");
+    });
+    l1.setController(w1);
+    showWindow(l1, "Wizard : Consumer");
+  }
+
+  private void showWindow(FXMLLoader loader, String title)
+  {
+    try
+    {
       Parent root = loader.load();
       Stage stage = new Stage();
-      stage.setTitle("Wizard");
+      stage.setTitle(title);
       Scene scene = new Scene(root);
       scene.getStylesheets().add("/main.css");
       stage.setScene(scene);

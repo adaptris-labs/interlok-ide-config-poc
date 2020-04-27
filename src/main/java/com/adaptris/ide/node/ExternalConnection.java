@@ -150,7 +150,12 @@ public class ExternalConnection {
   @Getter
   @Setter
   private ConnectionTechnology technology;
-  
+
+  public ExternalConnection()
+  {
+    // default/empty constructor
+  }
+
   public ExternalConnection(ConnectionDirection direction)
   {
     this.direction = direction;

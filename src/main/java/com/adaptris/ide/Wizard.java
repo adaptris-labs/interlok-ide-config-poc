@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,77 +16,76 @@ import org.apache.commons.lang3.StringUtils;
 
 public class Wizard
 {
+  @Getter
   @FXML
-  private ChoiceBox consumers;
+  private Label endPointLabel;
 
   @FXML
-  private ChoiceBox producers;
+  private ChoiceBox endPoint;
 
   @FXML
-  private TextField consumerDestination;
+  private Label label1;
 
   @FXML
-  private TextField producerDestination;
+  private TextField textField1;
 
   @FXML
-  private Button okayButton;
+  private Label label2;
+
+  @FXML
+  private TextField textField2;
+
+  @FXML
+  private Label label3;
+
+  @FXML
+  private TextField textField3;
 
   @FXML
   private Button cancelButton;
 
+  @FXML
+  private Button nextButton;
+
   @Getter
   @Setter
-  private OkayHandler onOkay;
+  private WizardNextButtonHandler onNext;
+
+  @Getter
+  private ExternalConnection connection;
+
+  public Wizard(ExternalConnection.ConnectionDirection direction)
+  {
+    connection = new ExternalConnection(direction);
+  }
 
   @FXML
   public void initialize()
   {
-    ExternalConnection consumer = new ExternalConnection(ExternalConnection.ConnectionDirection.CONSUMER);
-    ExternalConnection producer = new ExternalConnection(ExternalConnection.ConnectionDirection.PRODUCER);
+    endPointLabel.setText(connection.getDirection().toString());
 
-    consumers.setItems(getTechnologies());
-    consumers.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) ->
+    endPoint.setItems(getTechnologies());
+    endPoint.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) ->
     {
       ConnectionTechnology tech = (ConnectionTechnology)newValue;
-      //ObservableList<String> consumers = getConsumers(tech);
-      consumerDestination.setVisible(tech != ConnectionTechnology.NULL);
-      consumer.setTechnology(tech);
-      // TODO: provide more settings
-      consumer.setEndpoint("NULL");
-      consumer.setConnectionClassName("TODO");
-
-      checkEnableOkay();
-    });
-    consumerDestination.setOnKeyTyped((event) ->
-    {
-      consumer.setConnectionUrl(consumerDestination.getText());
+      connection.setTechnology(tech);
+      updateLabels();
       checkEnableOkay();
     });
 
-    producers.setItems(getTechnologies());
-    producers.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) ->
-    {
-      ConnectionTechnology tech = (ConnectionTechnology)newValue;
-      //ObservableList<String> producers = getProducers(tech);
-      producerDestination.setVisible(tech != ConnectionTechnology.NULL);
-      producer.setTechnology(tech);
-      // TODO: provide more settings
-      producer.setEndpoint("NULL");
-      producer.setConnectionClassName("TODO");
+    textFieldHandler(textField1);
+    textFieldHandler(textField2);
+    textFieldHandler(textField3);
 
-      checkEnableOkay();
-    });
-
-    producerDestination.setOnKeyTyped((event) ->
+    nextButton.setOnMouseClicked((event) ->
     {
-      producer.setConnectionUrl(producerDestination.getText());
-      checkEnableOkay();
-    });
-
-    okayButton.setOnMouseClicked((event) ->
-    {
+      // TODO get the values from TextField's and stick it somewhere...
+      updateConnectionDetails();
       ((Node)(event.getSource())).getScene().getWindow().hide();
-      onOkay.onOkay(consumer, producer);
+      if (onNext != null)
+      {
+        onNext.onNext(connection);
+      }
     });
 
     cancelButton.setOnMouseClicked((event) ->
@@ -94,52 +94,79 @@ public class Wizard
     });
   }
 
-  private void checkEnableOkay()
+  private void textFieldHandler(TextField textField)
   {
-    okayButton.setDisable(!(consumerDestination.isVisible() && !StringUtils.isEmpty(consumerDestination.getText()) &&
-                            producerDestination.isVisible() && !StringUtils.isEmpty(producerDestination.getText())));
+    textField.setOnKeyTyped((event) ->
+    {
+      checkEnableOkay();
+    });
   }
 
-  private ObservableList<ConnectionTechnology> getTechnologies()
+  private void updateLabels()
+  {
+    switch (connection.getTechnology())
+    {
+      case WMQ:
+      case SOLACE:
+        label1.setText("Topic / Queue");
+        label2.setText("Username");
+        label3.setText("Password");
+        textField1.setVisible(true);
+        textField2.setVisible(true);
+        textField3.setVisible(true);
+        break;
+
+      // TODO handle other consumers/producers
+
+      default:
+        label1.setText("");
+        label2.setText("");
+        label3.setText("");
+        textField1.setVisible(false);
+        textField2.setVisible(false);
+        textField3.setVisible(false);
+        break;
+    }
+  }
+
+  private void checkEnableOkay()
+  {
+    boolean disabled = true;
+    switch (connection.getTechnology())
+    {
+      case WMQ:
+      case SOLACE:
+        disabled = StringUtils.isEmpty(textField1.getText()) || StringUtils.isEmpty(textField2.getText()) || StringUtils.isEmpty(textField3.getText());
+        break;
+
+      default:
+        // TODO...
+        break;
+    }
+    nextButton.setDisable(disabled);
+  }
+
+  private void updateConnectionDetails()
+  {
+    switch (connection.getTechnology())
+    {
+      case WMQ:
+      case SOLACE:
+        connection.setConnectionUrl(textField1.getText());
+        // TODO: provide more settings
+        connection.setEndpoint("NULL");
+        connection.setConnectionClassName("TODO");
+        break;
+
+      default:
+        // TODO...
+        break;
+    }
+  }
+
+  private static ObservableList<ConnectionTechnology> getTechnologies()
   {
     return FXCollections.observableArrayList(ConnectionTechnology.values());
   }
 
-  /*private ObservableList<String> getConsumers(ConnectionTechnology technology)
-  {
-    ObservableList<String> list = FXCollections.observableArrayList();
-    switch (technology)
-    {
-      case SOLACE:
-
-        break;
-
-      default:
-        list.add("TODO");
-        break;
-    }
-    return list;
-  }
-
-  private ObservableList<String> getProducers(ConnectionTechnology technology)
-  {
-    ObservableList<String> list = FXCollections.observableArrayList();
-    switch (technology)
-    {
-      case WMQ:
-
-        break;
-
-      default:
-        list.add("TODO");
-        break;
-    }
-    return list;
-  }*/
-
-  @FunctionalInterface
-  public interface OkayHandler
-  {
-    void onOkay(ExternalConnection consumer, ExternalConnection producer);
-  }
 }
