@@ -47,7 +47,7 @@ public class MainStageController implements ClusterInstanceEventListener {
   private Button clusterSearchButton;
 
   @FXML
-  private Button newClusterButton;
+  private Button newWizardButton;
   
   @FXML
   public void initialize() {
@@ -58,7 +58,7 @@ public class MainStageController implements ClusterInstanceEventListener {
       handleSearchCluster();
     });
 
-    newClusterButton.setOnMouseClicked((event) ->
+    newWizardButton.setOnMouseClicked((event) ->
     {
       newWizard();
     });
@@ -98,7 +98,8 @@ public class MainStageController implements ClusterInstanceEventListener {
     } catch (IOException e) {
       e.printStackTrace();
     }
-    
+
+    newWizardButton.setDisable(false);
   }
 
   private AnchorPane drawNewExternalConnection(ExternalConnection externalConnection) {
@@ -187,20 +188,27 @@ public class MainStageController implements ClusterInstanceEventListener {
   private void newWizard()
   {
     FXMLLoader l1 = new FXMLLoader(getClass().getResource("Wizard.fxml"));
-    Wizard w1 = new Wizard(ExternalConnection.ConnectionDirection.CONSUMER);
+    WizardController w1 = new WizardController(ExternalConnection.ConnectionDirection.CONSUMER);
     w1.setOnNext((consumer) ->
     {
       externalConnections.add(consumer);
       connectInterlokToExternal(drawNewExternalConnection(consumer));
 
       FXMLLoader l2 = new FXMLLoader(getClass().getResource("Wizard.fxml"));
-      Wizard w2 = new Wizard(ExternalConnection.ConnectionDirection.PRODUCER);
+      WizardController w2 = new WizardController(ExternalConnection.ConnectionDirection.PRODUCER);
       w2.setOnNext((producer) ->
       {
         externalConnections.add(producer);
         connectInterlokToExternal(drawNewExternalConnection(producer));
 
         // TODO more stuff
+
+        String config = GenerateConfig.generate(consumer, producer);
+        FXMLLoader l3 = new FXMLLoader(getClass().getResource("ViewConfig.fxml"));
+        ViewConfigController w3 = new ViewConfigController(config);
+        l3.setController(w3);
+        showWindow(l3, "Configuration");
+
       });
       l2.setController(w2);
       showWindow(l2, "Wizard : Producer");

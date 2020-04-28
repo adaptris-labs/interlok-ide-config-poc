@@ -14,7 +14,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 
-public class Wizard
+public class WizardController
 {
   @Getter
   @FXML
@@ -54,7 +54,7 @@ public class Wizard
   @Getter
   private ExternalConnection connection;
 
-  public Wizard(ExternalConnection.ConnectionDirection direction)
+  public WizardController(ExternalConnection.ConnectionDirection direction)
   {
     connection = new ExternalConnection(direction);
   }
@@ -116,7 +116,24 @@ public class Wizard
         textField3.setVisible(true);
         break;
 
-      // TODO handle other consumers/producers
+      case FILESYSTEM:
+        label1.setText("Path");
+        label2.setText("");
+        label3.setText("");
+        textField1.setVisible(true);
+        textField2.setVisible(false);
+        textField3.setVisible(false);
+        break;
+
+      case HTTP:
+      case JDBC:
+        label1.setText("URL");
+        label2.setText("Username");
+        label3.setText("Password");
+        textField1.setVisible(true);
+        textField2.setVisible(true);
+        textField3.setVisible(true);
+        break;
 
       default:
         label1.setText("");
@@ -136,11 +153,20 @@ public class Wizard
     {
       case WMQ:
       case SOLACE:
+      case JDBC:
         disabled = StringUtils.isEmpty(textField1.getText()) || StringUtils.isEmpty(textField2.getText()) || StringUtils.isEmpty(textField3.getText());
         break;
 
+      case FILESYSTEM:
+      case HTTP:
+        disabled = StringUtils.isEmpty(textField1.getText());
+        break;
+
+      case NULL:
+        disabled = false;
+        break;
+
       default:
-        // TODO...
         break;
     }
     nextButton.setDisable(disabled);
@@ -150,16 +176,15 @@ public class Wizard
   {
     switch (connection.getTechnology())
     {
-      case WMQ:
-      case SOLACE:
-        connection.setConnectionUrl(textField1.getText());
-        // TODO: provide more settings
-        connection.setEndpoint("NULL");
-        connection.setConnectionClassName("TODO");
+      case NULL:
+        connection.setConnectionUrl("NULL");
         break;
 
       default:
-        // TODO...
+        connection.setConnectionUrl(textField1.getText());
+        // TODO: provide more settings for each consumer/producer type
+        connection.setEndpoint("NULL");
+        connection.setConnectionClassName("TODO");
         break;
     }
   }

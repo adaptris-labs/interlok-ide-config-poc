@@ -15,6 +15,6 @@
             <DropShadow color="WHITE" height="47.69" radius="23.345" spread="0.13" width="47.69" />
          </effect></AnchorPane>
       <Button fx:id="clusterSearchButton" layoutX="327.0" layoutY="10.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="108.0" text="Search" />
-      <Button fx:id="newClusterButton" layoutX="458.0" layoutY="10.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="108.0" text="New..." />
+      <Button fx:id="newWizardButton" layoutX="458.0" layoutY="10.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="108.0" text="New..." disable="true" />
    </children>
 </AnchorPane>
