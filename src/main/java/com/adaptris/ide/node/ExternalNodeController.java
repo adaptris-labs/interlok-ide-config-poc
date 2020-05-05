@@ -25,6 +25,10 @@ public class ExternalNodeController {
   @Setter
   private Line lineToInterlokNode;
 
+  public ExternalNodeController(ExternalConnection externalConnection) {
+    this.externalConnection = externalConnection;
+  }
+  
   @FXML
   public void initialize() {
     externalNodeImage.setImage(externalConnection.getTechnology().getImage());

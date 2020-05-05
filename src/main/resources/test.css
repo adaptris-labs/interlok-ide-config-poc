@@ -1,0 +1,38 @@
+.mainFxmlClass {
+
+}
+
+.root{
+	-fx-background-color: radial-gradient(center 50% 0%, radius 100%, #14145a, #101030);
+}
+
+.anchor-pane{
+	-fx-background-color: radial-gradient(center 50% 0%, radius 100%, #14145a, #101030);
+}
+
+.darkGradientBlue {
+	-fx-background-color: radial-gradient(center 50% 0%, radius 100%, #14145a, #101030);
+}
+
+.genericPink {
+	-fx-background-color: radial-gradient(center 50% 0%, radius 100%, #ff00db, #6f0060);
+}
+
+.generic-transparent {
+	-fx-background-color: transparent;
+}
+
+.generic-transparent-rounded {
+	-fx-background-color: transparent;
+	-fx-background-radius: 10;
+}
+
+.endpointNode {
+	-fx-background-color: radial-gradient(center 50% 0%, radius 100%, #9146f2, #4e2189);
+	-fx-background-radius: 10;
+}
+
+.text-field {
+	-fx-background-color: transparent;
+	-fx-text-fill: white;
+}

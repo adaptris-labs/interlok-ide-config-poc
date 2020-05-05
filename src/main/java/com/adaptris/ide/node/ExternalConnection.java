@@ -160,6 +160,10 @@ public class ExternalConnection {
   {
     this.direction = direction;
   }
+  
+  public ExternalConnection(ConnectionTechnology technology) {
+    this.technology = technology;
+  }
 
   @Override
   public int hashCode()

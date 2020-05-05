@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="138.0" prefWidth="274.0" stylesheets="@../../../../../resources/test.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+   <styleClass>
+      <String fx:value="node" />
+      <String fx:value="endpointNode" />
+   </styleClass>
+   <children>
+      <ImageView fx:id="endpointBackgroundImg" fitHeight="138.0" fitWidth="274.0" layoutY="1.0" opacity="0.2" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="-1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="1.0" />
+      <ImageView fx:id="endpointImage" fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
+      <TextField fx:id="endpointDirection" alignment="CENTER_RIGHT" disable="true" editable="false" layoutX="121.0" layoutY="4.0" promptText="Consumer" text="Consumer" AnchorPane.rightAnchor="4.0" AnchorPane.topAnchor="4.0" />
+      <TextField fx:id="endpointDestination" alignment="CENTER_RIGHT" editable="false" layoutX="80.0" layoutY="29.0" prefHeight="25.0" prefWidth="190.0" text="/myrest/service/*">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </TextField>
+      <Line endX="150.0" layoutX="110.5" layoutY="112.0" startX="-100.0" stroke="#401561" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="13.0" />
+      <TextField fx:id="endpointUrl" alignment="CENTER_RIGHT" editable="false" layoutX="10.0" layoutY="75.0" prefHeight="30.0" prefWidth="251.0" text="http://localhost:8082/">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </TextField>
+      <ImageView fx:id="endpointSettingsImage" fitHeight="25.0" fitWidth="25.0" layoutX="10.0" layoutY="113.0" pickOnBounds="true" preserveRatio="true" />
+   </children>
+   <effect>
+      <DropShadow offsetX="3.0" offsetY="3.0" />
+   </effect>
+</AnchorPane>

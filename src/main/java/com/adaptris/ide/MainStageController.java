@@ -4,6 +4,9 @@ import com.adaptris.ide.jmx.InterlokJmxHelper;
 import com.adaptris.ide.node.ExternalConnection;
 import com.adaptris.ide.node.ExternalNodeController;
 import com.adaptris.ide.node.InterlokNodeController;
+import com.adaptris.ide.selector.AdaptrisEndpointStaticModelBuilder;
+import com.adaptris.ide.selector.SelectorController;
+import com.adaptris.ide.selector.SelectorModel;
 import com.adaptris.mgmt.cluster.ClusterInstance;
 import com.adaptris.mgmt.cluster.jgroups.ClusterInstanceEventListener;
 import com.adaptris.mgmt.cluster.jgroups.JGroupsListener;
@@ -19,6 +22,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -58,9 +62,10 @@ public class MainStageController implements ClusterInstanceEventListener {
       handleSearchCluster();
     });
 
+    newWizardButton.setDisable(false);
     newWizardButton.setOnMouseClicked((event) ->
     {
-      newWizard();
+      newWizardv2();
     });
   }
 
@@ -104,7 +109,7 @@ public class MainStageController implements ClusterInstanceEventListener {
 
   private AnchorPane drawNewExternalConnection(ExternalConnection externalConnection) {
     try {
-      ExternalNodeController controller = new ExternalNodeController();
+      ExternalNodeController controller = new ExternalNodeController(null);
       controller.setExternalConnection(externalConnection);
       
       FXMLLoader loader = new FXMLLoader(getClass().getResource("node/ExternalNode.fxml"));
@@ -184,6 +189,27 @@ public class MainStageController implements ClusterInstanceEventListener {
     });
   }
 
+  private void newWizardv2() {
+    Parent root;
+    try {
+      Stage stage = new Stage();
+      stage.initStyle(StageStyle.UNDECORATED);
+
+      com.adaptris.ide.wizard.WizardController controller = new com.adaptris.ide.wizard.WizardController();
+
+      FXMLLoader loader = new FXMLLoader(getClass().getResource("wizard/Wizard.fxml"));
+      loader.setController(controller);
+
+      root = loader.load();
+      Scene scene = new Scene(root);
+      scene.getStylesheets().add("/test.css");
+      stage.setScene(scene);
+      stage.show();
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
 
   private void newWizard()
   {

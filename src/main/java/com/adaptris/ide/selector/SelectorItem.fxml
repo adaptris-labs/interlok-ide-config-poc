@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.paint.LinearGradient?>
+<?import javafx.scene.paint.RadialGradient?>
+<?import javafx.scene.paint.Stop?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.shape.Rectangle?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="55.0" prefWidth="201.0" styleClass="generic-transparent-rounded" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Rectangle arcHeight="5.0" arcWidth="5.0" height="30.0" layoutX="-1.0" layoutY="12.0" stroke="BLACK" strokeType="INSIDE" width="157.0">
+         <fill>
+            <LinearGradient endX="1.0" endY="1.0">
+               <stops>
+                  <Stop color="#ff1fee" />
+                  <Stop color="#610245" offset="1.0" />
+               </stops>
+            </LinearGradient>
+         </fill>
+         <effect>
+            <DropShadow height="32.86" offsetX="10.0" offsetY="10.0" radius="15.93" width="32.86" />
+         </effect>
+      </Rectangle>
+      <Circle fx:id="selectorCircle" layoutX="176.0" layoutY="27.0" radius="25.0" stroke="BLACK" strokeType="INSIDE">
+         <fill>
+            <RadialGradient centerX="0.5" centerY="0.5" radius="0.5">
+               <stops>
+                  <Stop color="#ff1fc7" />
+                  <Stop color="#ff3434" offset="1.0" />
+               </stops>
+            </RadialGradient>
+         </fill>
+         <effect>
+            <DropShadow height="41.76" offsetX="10.0" offsetY="10.0" radius="21.119999999999997" width="44.72" />
+         </effect>
+      </Circle>
+      <TextField fx:id="selectorText" editable="false" focusTraversable="false" layoutX="3.0" layoutY="15.0" text="Metadata" />
+   </children>
+</AnchorPane>

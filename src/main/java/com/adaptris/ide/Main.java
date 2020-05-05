@@ -24,7 +24,7 @@ public class Main extends Application {
         primaryStage.getScene().setRoot(root);
       }
       
-      scene.getStylesheets().add("/main.css");
+      scene.getStylesheets().add("/test.css");
       
       primaryStage.setOnCloseRequest(e -> {
         Platform.exit();

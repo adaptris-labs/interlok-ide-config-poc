@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="390.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Button fx:id="buttonHttp" layoutX="55.0" layoutY="91.0" mnemonicParsing="false" prefHeight="59.0" prefWidth="166.0" text="HTTP/S" />
+      <Button fx:id="buttonFs" layoutX="349.0" layoutY="91.0" mnemonicParsing="false" prefHeight="59.0" prefWidth="166.0" text="File System" />
+      <Button fx:id="buttonMessaging" layoutX="55.0" layoutY="186.0" mnemonicParsing="false" prefHeight="59.0" prefWidth="166.0" text="Java Messaging" />
+      <Button fx:id="buttonAws" layoutX="349.0" layoutY="186.0" mnemonicParsing="false" prefHeight="59.0" prefWidth="166.0" text="AWS" />
+      <Button fx:id="buttonFtp" layoutX="55.0" layoutY="288.0" mnemonicParsing="false" prefHeight="59.0" prefWidth="166.0" text="S/FTP" />
+      <Button fx:id="buttonJdbc" layoutX="349.0" layoutY="288.0" mnemonicParsing="false" prefHeight="59.0" prefWidth="166.0" text="Database" />
+      <Label layoutX="205.0" layoutY="21.0" text="Please select your technology" />
+   </children>
+</AnchorPane>
